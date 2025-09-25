@@ -2,7 +2,9 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Search, Bell, Settings, Activity, Shield, Zap } from "lucide-react"
+import { useRouter, usePathname } from "next/navigation"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { Search, Bell, Settings, Activity, Shield, Zap, BarChart3, Brain } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -18,11 +20,25 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ systemHealth }: DashboardHeaderProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const navigationTabs = [
+    { name: "Dashboard", icon: BarChart3, href: "/dashboard" },
+    { name: "System Status", icon: Activity, href: "/status" },
+    { name: "Simulations", icon: Brain, href: "/simulation" },
+    { name: "Settings", icon: Settings, href: "/settings" },
+  ]
+
+  const handleTabClick = (href: string) => {
+    router.push(href)
+  }
 
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="container mx-auto px-6">
+        {/* Top Row - Logo, Search, Actions */}
+        <div className="flex items-center justify-between py-4">
           {/* Logo and Title */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -59,45 +75,67 @@ export function DashboardHeader({ systemHealth }: DashboardHeaderProps) {
             </div>
           </motion.div>
 
-          {/* System Status and Actions */}
+          {/* Actions */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
             className="flex items-center space-x-4"
           >
-            {/* System Health Indicators */}
-            <div className="hidden md:flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-success rounded-full status-active" />
-                <span className="text-sm text-muted-foreground">
-                  {((systemHealth.uptime || 0.999) * 100).toFixed(1)}% uptime
-                </span>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Activity className="w-4 h-4 text-primary" />
-                <span className="text-sm text-muted-foreground">{systemHealth.responseTime || 450}ms</span>
-              </div>
-
-              <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                <Zap className="w-3 h-3 mr-1" />
-                {systemHealth.agentsActive || 4} agents
-              </Badge>
-            </div>
-
-            {/* Action Buttons */}
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-            </Button>
-
-            <Button variant="ghost" size="sm">
-              <Settings className="w-4 h-4" />
-            </Button>
-
-            <Button className="bg-primary hover:bg-primary/90 glow-primary">Emergency Override</Button>
+            <ConnectButton />
           </motion.div>
+        </div>
+
+        {/* Bottom Row - Navigation Tabs */}
+        <div className="flex items-center space-x-1 pb-4">
+          {navigationTabs.map((tab) => {
+            const Icon = tab.icon
+            const isActive = pathname === tab.href
+            return (
+              <Button
+                key={tab.name}
+                variant={isActive ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleTabClick(tab.href)}
+                className={`flex items-center space-x-2 ${
+                  isActive 
+                    ? "bg-primary text-primary-foreground" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.name}</span>
+              </Button>
+            )
+          })}
+        </div>
+
+        {/* System Health Bar */}
+        <div className="flex items-center justify-between py-2 border-t border-border/50">
+          <div className="flex items-center space-x-6 text-sm">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-muted-foreground">
+                {systemHealth.uptime ? `${(systemHealth.uptime * 100).toFixed(1)}% uptime` : "System Online"}
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Activity className="w-4 h-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                {systemHealth.responseTime ? `${systemHealth.responseTime}ms` : "450ms avg"}
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Brain className="w-4 h-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                {systemHealth.agentsActive ? `${systemHealth.agentsActive} agents` : "4 agents"}
+              </span>
+            </div>
+          </div>
+          
+          <Badge variant="secondary" className="bg-green-500/10 text-green-500 border-green-500/20">
+            All Systems Operational
+          </Badge>
         </div>
       </div>
     </header>

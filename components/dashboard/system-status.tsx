@@ -73,13 +73,13 @@ export function SystemStatus() {
       case "active":
       case "deployed":
       case "connected":
-        return "text-green-500"
+        return "text-success"
       case "warning":
-        return "text-yellow-500"
+        return "text-warning"
       case "error":
-        return "text-red-500"
+        return "text-destructive"
       default:
-        return "text-gray-500"
+        return "text-muted-foreground"
     }
   }
 
@@ -89,13 +89,13 @@ export function SystemStatus() {
       case "active":
       case "deployed":
       case "connected":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-success" />
       case "warning":
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />
+        return <AlertCircle className="h-4 w-4 text-warning" />
       case "error":
-        return <AlertCircle className="h-4 w-4 text-red-500" />
+        return <AlertCircle className="h-4 w-4 text-destructive" />
       default:
-        return <Clock className="h-4 w-4 text-gray-500" />
+        return <Clock className="h-4 w-4 text-muted-foreground" />
     }
   }
 

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Clock, CheckCircle, TrendingUp, Shield, Brain, AlertTriangle } from "lucide-react"
+import { Bot, Clock, CheckCircle, TrendingUp, Shield, Brain, AlertTriangle, Activity } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 
 interface Decision {

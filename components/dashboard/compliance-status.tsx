@@ -62,15 +62,15 @@ export function ComplianceStatus() {
     switch (status) {
       case "compliant":
       case "passed":
-        return "text-green-500"
+        return "text-success"
       case "review_needed":
       case "warning":
-        return "text-yellow-500"
+        return "text-warning"
       case "non_compliant":
       case "failed":
-        return "text-red-500"
+        return "text-destructive"
       default:
-        return "text-gray-500"
+        return "text-muted-foreground"
     }
   }
 
@@ -78,15 +78,15 @@ export function ComplianceStatus() {
     switch (status) {
       case "compliant":
       case "passed":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-success" />
       case "review_needed":
       case "warning":
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />
+        return <AlertTriangle className="h-4 w-4 text-warning" />
       case "non_compliant":
       case "failed":
-        return <AlertTriangle className="h-4 w-4 text-red-500" />
+        return <AlertTriangle className="h-4 w-4 text-destructive" />
       default:
-        return <Clock className="h-4 w-4 text-gray-500" />
+        return <Clock className="h-4 w-4 text-muted-foreground" />
     }
   }
 
@@ -151,14 +151,14 @@ export function ComplianceStatus() {
               {complianceData.alerts.map((alert: any) => (
                 <div
                   key={alert.id}
-                  className="flex items-start gap-2 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20"
+                  className="flex items-start gap-2 p-3 rounded-lg bg-warning/10 border border-warning/20"
                 >
-                  <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                  <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
                   <div className="flex-1">
                     <div className="text-sm font-medium">{alert.message}</div>
                     <div className="text-xs text-muted-foreground">{new Date(alert.timestamp).toLocaleString()}</div>
                   </div>
-                  <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                  <Badge variant="outline" className="text-warning border-warning">
                     {alert.severity}
                   </Badge>
                 </div>

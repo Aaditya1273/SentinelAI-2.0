@@ -9,22 +9,29 @@ async function main() {
   console.log("Deploying contracts with account:", deployer.address)
   console.log("Account balance:", (await deployer.getBalance()).toString())
 
-  // Deploy ZKVerifier first
-  console.log("\n1. Deploying ZKVerifier...")
+  // Deploy USDM Token first
+  console.log("\n1. Deploying USDM Token...")
+  const USDMToken = await ethers.getContractFactory("USDMToken")
+  const usdmToken = await USDMToken.deploy()
+  await usdmToken.deployed()
+  console.log("USDM Token deployed to:", usdmToken.address)
+
+  // Deploy ZKVerifier
+  console.log("\n2. Deploying ZKVerifier...")
   const ZKVerifier = await ethers.getContractFactory("ZKVerifier")
   const zkVerifier = await ZKVerifier.deploy()
   await zkVerifier.deployed()
   console.log("ZKVerifier deployed to:", zkVerifier.address)
 
   // Deploy main SentinelAI contract
-  console.log("\n2. Deploying SentinelAI...")
+  console.log("\n3. Deploying SentinelAI...")
   const SentinelAI = await ethers.getContractFactory("SentinelAI")
   const sentinelAI = await SentinelAI.deploy()
   await sentinelAI.deployed()
   console.log("SentinelAI deployed to:", sentinelAI.address)
 
   // Setup initial configuration
-  console.log("\n3. Setting up initial configuration...")
+  console.log("\n4. Setting up initial configuration...")
 
   // Grant DAO role to deployer for testing
   const DAO_ROLE = await sentinelAI.DAO_ROLE()
@@ -32,7 +39,7 @@ async function main() {
   console.log("Granted DAO_ROLE to deployer")
 
   // Setup verification keys for ZK circuits
-  console.log("\n4. Setting up ZK verification keys...")
+  console.log("\n5. Setting up ZK verification keys...")
 
   // Mock verification key for decision proof circuit
   const mockVK = {
@@ -76,7 +83,7 @@ async function main() {
   console.log("Set verification key for compliance_mica circuit")
 
   // Deploy test agents
-  console.log("\n5. Deploying test agents...")
+  console.log("\n6. Deploying test agents...")
 
   const testAgents = [
     { name: "TraderAgent", type: 0, address: deployer.address },
@@ -99,6 +106,7 @@ async function main() {
   console.log("\n✅ Deployment completed successfully!")
   console.log("\nContract Addresses:")
   console.log("==================")
+  console.log("USDM Token:", usdmToken.address)
   console.log("SentinelAI:", sentinelAI.address)
   console.log("ZKVerifier:", zkVerifier.address)
 

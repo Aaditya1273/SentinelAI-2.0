@@ -58,7 +58,7 @@ export function CrisisDashboard() {
       case "high":
         return "bg-orange-500"
       case "medium":
-        return "bg-yellow-500"
+        return "bg-warning"
       case "low":
         return "bg-green-500"
       default:

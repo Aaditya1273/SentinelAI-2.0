@@ -13,6 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   PieChart as RechartsPieChart,
+  Pie,
   Cell,
 } from "recharts"
 

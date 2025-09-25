@@ -68,7 +68,7 @@ export function CrisisSimulation() {
       case "high":
         return "bg-orange-500"
       case "medium":
-        return "bg-yellow-500"
+        return "bg-warning"
       default:
         return "bg-gray-500"
     }
