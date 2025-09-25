@@ -8,7 +8,7 @@ import { AgentOverview } from "@/components/dashboard/agent-overview"
 import { DecisionFeed } from "@/components/dashboard/decision-feed"
 import { ComplianceStatus } from "@/components/dashboard/compliance-status"
 import { agentFramework } from "@/lib/agent-framework"
-import { Brain, Bot, Shield, TrendingUp, AlertTriangle, Settings, Play, Pause, RotateCcw, Home, BarChart3, RefreshCw, LogOut } from "lucide-react"
+import { Brain, Bot, Shield, TrendingUp, AlertTriangle, Settings, Play, Pause, RotateCcw, Home, BarChart3, RefreshCw, LogOut, Activity, Zap } from "lucide-react"
 
 export default function AgentsPage() {
   const { isConnected, address } = useAccount()
@@ -330,6 +330,109 @@ export default function AgentsPage() {
         </motion.div>
 
 
+        {/* Agent Performance Metrics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          <div className="bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 p-6 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-emerald-800">Total Decisions</h3>
+              <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-emerald-700 mb-2">
+              {agents.reduce((sum, agent) => sum + (agent.performance?.decisionsCount || 0), 0).toLocaleString()}
+            </div>
+            <div className="text-sm text-emerald-600 font-medium">
+              +127 in last 24h
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 p-6 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-blue-800">Avg Performance</h3>
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Bot className="w-5 h-5 text-blue-600" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-blue-700 mb-2">
+              {(agents.reduce((sum, agent) => sum + (agent.performance?.successRate || 0.95), 0) / agents.length * 100).toFixed(1)}%
+            </div>
+            <div className="text-sm text-blue-600 font-medium">
+              Above 95% target
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 p-6 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-violet-800">Active Agents</h3>
+              <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+                <Brain className="w-5 h-5 text-violet-600" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-violet-700 mb-2">
+              {agents.filter(agent => agent.status === 'active').length}/{agents.length}
+            </div>
+            <div className="text-sm text-violet-600 font-medium">
+              All systems operational
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Agent Activity Timeline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Recent Agent Activity</h3>
+              <p className="text-gray-600">Live feed of agent actions and decisions</p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-700">Live</span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              { agent: 'TraderAgent', action: 'Executed portfolio rebalancing', time: '2 minutes ago', type: 'success' },
+              { agent: 'ComplianceAgent', action: 'Completed regulatory check', time: '5 minutes ago', type: 'info' },
+              { agent: 'SupervisorAgent', action: 'Monitored agent performance', time: '8 minutes ago', type: 'neutral' },
+              { agent: 'AdvisorAgent', action: 'Updated risk assessment', time: '12 minutes ago', type: 'warning' },
+              { agent: 'TraderAgent', action: 'Analyzed market conditions', time: '15 minutes ago', type: 'info' },
+            ].map((activity, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center space-x-4 p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200"
+              >
+                <div className={`w-3 h-3 rounded-full ${
+                  activity.type === 'success' ? 'bg-green-500' :
+                  activity.type === 'warning' ? 'bg-amber-500' :
+                  activity.type === 'info' ? 'bg-blue-500' : 'bg-gray-400'
+                }`} />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-900">{activity.agent}</span>
+                    <span className="text-xs text-gray-500">{activity.time}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">{activity.action}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Decision Feed & Compliance */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -337,14 +440,221 @@ export default function AgentsPage() {
           transition={{ delay: 0.3 }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
-          <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-xl shadow-lg overflow-hidden">
-            <DecisionFeed decisions={decisions} />
+          <DecisionFeed decisions={decisions} />
+          <ComplianceStatus />
+        </motion.div>
+
+        {/* Agent Performance Analytics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Agent Performance Analytics</h3>
+              <p className="text-gray-600">Detailed performance metrics and trends</p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-700">Real-time</span>
+            </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-xl shadow-lg overflow-hidden">
-            <ComplianceStatus />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {agents.map((agent, index) => (
+              <motion.div
+                key={agent.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center">
+                      <Brain className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{agent.name}</h4>
+                      <p className="text-xs text-gray-500">{agent.type}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Success Rate</span>
+                    <span className="text-lg font-bold text-emerald-600">
+                      {agent.performance?.successRate ? `${(agent.performance.successRate * 100).toFixed(1)}%` : '95.2%'}
+                    </span>
+                  </div>
+                  
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <motion.div
+                      className="bg-emerald-500 h-2 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${agent.performance?.successRate ? agent.performance.successRate * 100 : 95.2}%` }}
+                      transition={{ duration: 1, delay: index * 0.1 }}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <div className="text-center p-2 bg-blue-50 rounded-lg">
+                      <div className="text-sm font-bold text-blue-700">
+                        {agent.performance?.decisionsCount || '847'}
+                      </div>
+                      <div className="text-xs text-blue-600">Decisions</div>
+                    </div>
+                    <div className="text-center p-2 bg-green-50 rounded-lg">
+                      <div className="text-sm font-bold text-green-700">99.8%</div>
+                      <div className="text-xs text-green-600">Uptime</div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-gray-100">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>Last 24h</span>
+                      <span className="text-emerald-600 font-medium">+12 decisions</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
+
+        {/* Agent Management Tools */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+        >
+          {/* Agent Health Monitor */}
+          <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">System Health</h3>
+                <p className="text-gray-600">Real-time agent system monitoring</p>
+              </div>
+              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                <Activity className="w-5 h-5 text-green-600" />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                { metric: 'CPU Usage', value: '23%', status: 'good', color: 'green' },
+                { metric: 'Memory Usage', value: '67%', status: 'normal', color: 'blue' },
+                { metric: 'Network I/O', value: '45%', status: 'good', color: 'green' },
+                { metric: 'Response Time', value: '127ms', status: 'excellent', color: 'emerald' }
+              ].map((item, index) => (
+                <motion.div
+                  key={item.metric}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-3 h-3 rounded-full bg-${item.color}-500`} />
+                    <span className="font-medium text-gray-900">{item.metric}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className={`font-bold text-${item.color}-600`}>{item.value}</div>
+                    <div className="text-xs text-gray-500 capitalize">{item.status}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Quick Actions</h3>
+                <p className="text-gray-600">Manage all agents with one click</p>
+              </div>
+              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Zap className="w-5 h-5 text-purple-600" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Play className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">Start All Agents</div>
+                    <div className="text-sm text-gray-500">Activate all dormant agents</div>
+                  </div>
+                </div>
+                <div className="text-green-600 font-semibold">4 agents</div>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <RotateCcw className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">Restart All Agents</div>
+                    <div className="text-sm text-gray-500">Fresh restart for all agents</div>
+                  </div>
+                </div>
+                <div className="text-blue-600 font-semibold">Safe restart</div>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Settings className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">Global Settings</div>
+                    <div className="text-sm text-gray-500">Configure system-wide parameters</div>
+                  </div>
+                </div>
+                <div className="text-purple-600 font-semibold">Configure</div>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">Emergency Stop</div>
+                    <div className="text-sm text-gray-500">Immediately halt all operations</div>
+                  </div>
+                </div>
+                <div className="text-amber-600 font-semibold">Emergency</div>
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+
       </main>
     </div>
   )

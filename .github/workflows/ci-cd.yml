@@ -1,5 +1,13 @@
 name: SentinelAI 4.0 CI/CD Pipeline
 
+# Optional Secrets Configuration:
+# - SNYK_TOKEN: For enhanced security scanning (optional)
+# - MAINNET_PRIVATE_KEY: For mainnet contract deployment (optional)
+# - ALCHEMY_API_KEY: For Ethereum mainnet access (optional)
+# - SLACK_WEBHOOK: For deployment notifications (optional)
+# - LHCI_GITHUB_APP_TOKEN: For Lighthouse CI performance testing (optional)
+# - CODECOV_TOKEN: For code coverage reporting (optional)
+
 on:
   push:
     branches: [ main, develop ]
@@ -105,9 +113,19 @@ jobs:
     - name: Run security audit
       run: npm audit --audit-level moderate
 
+    - name: Check Snyk Token
+      id: check-snyk
+      run: |
+        if [ -n "${{ secrets.SNYK_TOKEN }}" ]; then
+          echo "snyk-available=true" >> $GITHUB_OUTPUT
+        else
+          echo "snyk-available=false" >> $GITHUB_OUTPUT
+          echo "⚠️ SNYK_TOKEN not configured - skipping enhanced security scan"
+        fi
+
     - name: Run Snyk security scan
+      if: steps.check-snyk.outputs.snyk-available == 'true'
       uses: snyk/actions/node@master
-      if: ${{ env.SNYK_TOKEN != '' }}
       continue-on-error: true
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -264,12 +282,17 @@ jobs:
       run: npm ci --legacy-peer-deps
 
     - name: Deploy contracts to mainnet
-      if: ${{ env.MAINNET_PRIVATE_KEY != '' && env.ALCHEMY_API_KEY != '' }}
       continue-on-error: true
-      run: npx hardhat run scripts/deploy.js --network mainnet
+      run: |
+        if [ -n "$PRIVATE_KEY" ] && [ -n "$ALCHEMY_API_KEY" ]; then
+          npx hardhat run scripts/deploy.js --network mainnet
+        else
+          echo "Skipping mainnet deployment - secrets not configured"
+        fi
       env:
-        PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
-        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+        # Optional: Configure these secrets for mainnet deployment
+        PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY || '' }}
+        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY || '' }}
 
     - name: Deploy to production
       run: |
@@ -284,12 +307,13 @@ jobs:
 
     - name: Notify deployment
       uses: 8398a7/action-slack@v3
-      if: ${{ always() && env.SLACK_WEBHOOK != '' }}
+      if: always()
       continue-on-error: true
+      # Optional: Configure SLACK_WEBHOOK secret for deployment notifications
       with:
         status: ${{ job.status }}
         channel: '#deployments'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        webhook_url: ${{ secrets.SLACK_WEBHOOK || '' }}
 
   performance:
     name: Performance Tests
@@ -311,13 +335,17 @@ jobs:
       run: npm ci --legacy-peer-deps
 
     - name: Run Lighthouse CI
-      if: ${{ env.LHCI_GITHUB_APP_TOKEN != '' }}
       continue-on-error: true
       run: |
-        npm install -g @lhci/cli@0.12.x
-        lhci autorun
+        if [ -n "$LHCI_GITHUB_APP_TOKEN" ]; then
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun
+        else
+          echo "Skipping Lighthouse CI - LHCI_GITHUB_APP_TOKEN not configured"
+        fi
       env:
-        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        # Optional: Configure LHCI_GITHUB_APP_TOKEN secret for Lighthouse CI
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN || '' }}
 
     - name: Run load tests
       run: |

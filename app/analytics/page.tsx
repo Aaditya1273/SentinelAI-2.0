@@ -6,6 +6,29 @@ import { useAccount, useDisconnect } from "wagmi"
 import { useRouter } from "next/navigation"
 import { Shield, Brain, TrendingUp, AlertTriangle, Activity, DollarSign, Users, Zap, RefreshCw, ExternalLink, Home, BarChart3, Settings, LogOut, Menu, Target, PieChart, ArrowUp, ArrowDown, TrendingDown, Eye, Calendar, Filter } from "lucide-react"
 
+// Type definitions
+interface MetricCardProps {
+  title: string;
+  value: string;
+  change: number;
+  icon: React.ComponentType<any>;
+  type: string;
+  subtitle: string;
+}
+
+interface RiskMetricItemProps {
+  label: string;
+  value: string;
+  status: string;
+  description: string;
+}
+
+interface TreasuryItemProps {
+  asset: string;
+  value: string;
+  percentage: number;
+}
+
 export default function AnalyticsPage() {
   const { isConnected, address } = useAccount()
   const { disconnect } = useDisconnect()
@@ -418,8 +441,8 @@ export default function AnalyticsPage() {
 }
 
 // Enhanced Metric Card Component
-function MetricCard({ title, value, change, icon: Icon, type, subtitle }) {
-  const getTypeStyles = (type) => {
+function MetricCard({ title, value, change, icon: Icon, type, subtitle }: MetricCardProps) {
+  const getTypeStyles = (type: string) => {
     switch (type) {
       case 'success':
         return 'border-success/20 bg-gradient-to-br from-success/5 to-success/10'
@@ -434,7 +457,7 @@ function MetricCard({ title, value, change, icon: Icon, type, subtitle }) {
     }
   }
 
-  const getChangeColor = (change) => {
+  const getChangeColor = (change: number) => {
     if (change > 0) return 'text-success'
     if (change < 0) return 'text-destructive'
     return 'text-muted-foreground'
@@ -471,8 +494,8 @@ function MetricCard({ title, value, change, icon: Icon, type, subtitle }) {
 }
 
 // Risk Metric Item Component
-function RiskMetricItem({ label, value, status, description }) {
-  const getStatusColor = (status) => {
+function RiskMetricItem({ label, value, status, description }: RiskMetricItemProps) {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'excellent': return 'text-green-700'
       case 'good': return 'text-blue-700'
@@ -482,7 +505,7 @@ function RiskMetricItem({ label, value, status, description }) {
     }
   }
 
-  const getStatusBg = (status) => {
+  const getStatusBg = (status: string) => {
     switch (status) {
       case 'excellent': return 'bg-green-100'
       case 'good': return 'bg-blue-100'
@@ -563,7 +586,7 @@ function TreasuryAnalytics() {
   )
 }
 
-function TreasuryItem({ asset, value, percentage }) {
+function TreasuryItem({ asset, value, percentage }: TreasuryItemProps) {
   return (
     <div className="flex items-center justify-between p-3 rounded-lg hover:bg-purple-100/50 transition-colors">
       <div className="flex items-center space-x-3">

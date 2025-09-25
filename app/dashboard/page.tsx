@@ -5,10 +5,75 @@ import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useAccount, useDisconnect } from "wagmi"
 import { Shield, Brain, TrendingUp, AlertTriangle, Activity, DollarSign, Users, Zap, RefreshCw, ExternalLink, Home, BarChart3, Settings, LogOut, Menu } from "lucide-react"
+import { DecisionFeed } from "@/components/dashboard/decision-feed"
+
+// Type definitions
+interface Token {
+  symbol: string;
+  amount: number;
+  value: number;
+  change: number;
+}
+
+interface DeFiPosition {
+  name: string;
+  tvl: number;
+  change: number;
+}
+
+interface TreasuryData {
+  totalValue: number;
+  ethPrice: number;
+  btcPrice: number;
+  tokens: Token[];
+  defiPositions: DeFiPosition[];
+  lastUpdated: string;
+}
+
+interface MarketData {
+  totalMarketCap: number;
+  marketCapChange: number;
+  bitcoinDominance: number;
+  ethereumDominance: number;
+  activeCoins: number;
+  lastUpdated: string;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  status: string;
+  performance: number;
+  lastAction: string;
+  decisions: number;
+  uptime: string;
+}
+
+interface Decision {
+  id: string;
+  agentId?: string;
+  agent?: string;
+  timestamp: Date;
+  action: string;
+  rationale?: string;
+  confidence?: number;
+  impact?: {
+    treasuryChange: number;
+    riskScore: number;
+    complianceScore: number;
+  };
+  type?: string;
+}
+
+interface DeFiProtocol {
+  name: string;
+  tvl: number;
+  change_1d?: number;
+}
 
 // Real API service
 const apiService = {
-  async fetchTreasuryData() {
+  async fetchTreasuryData(): Promise<TreasuryData> {
     try {
       // Fetch real DeFi protocol data using public APIs
       const [ethPrice, btcPrice, daoBalance, aaveData] = await Promise.all([
@@ -43,7 +108,7 @@ const apiService = {
       const response = await fetch('https://api.llama.fi/protocols')
       const protocols = await response.json()
       
-      return protocols.slice(0, 5).map(protocol => ({
+      return protocols.slice(0, 5).map((protocol: DeFiProtocol) => ({
         name: protocol.name,
         tvl: protocol.tvl,
         change: protocol.change_1d || 0
@@ -57,7 +122,7 @@ const apiService = {
     }
   },
 
-  async fetchMarketData() {
+  async fetchMarketData(): Promise<MarketData> {
     try {
       const response = await fetch('https://api.coingecko.com/api/v3/global')
       const data = await response.json()
@@ -83,7 +148,7 @@ const apiService = {
     }
   },
 
-  getMockTreasuryData() {
+  getMockTreasuryData(): TreasuryData {
     return {
       totalValue: 2345678.90,
       ethPrice: 2456.78,
@@ -105,23 +170,58 @@ const apiService = {
 
 // AI Agent Simulator with realistic data
 const agentSimulator = {
-  generateDecision() {
+  generateDecision(): Decision {
     const decisions = [
-      { type: 'rebalance', action: 'Moved 50 ETH to high-yield farming', confidence: 94, impact: 'positive' },
-      { type: 'risk', action: 'Detected volatility spike, reduced exposure by 15%', confidence: 87, impact: 'protective' },
-      { type: 'yield', action: 'Optimized DeFi positions, +2.3% APY', confidence: 91, impact: 'positive' },
-      { type: 'compliance', action: 'Verified MiCA compliance for EU operations', confidence: 98, impact: 'regulatory' },
-      { type: 'alert', action: 'Unusual whale activity detected on Uniswap', confidence: 76, impact: 'warning' }
+      { 
+        type: 'rebalance', 
+        agentId: 'trader',
+        action: 'Moved 50 ETH to high-yield farming', 
+        confidence: 0.94, 
+        rationale: 'Identified higher yield opportunities in DeFi protocols',
+        impact: { treasuryChange: 15000, riskScore: -0.02, complianceScore: 0.01 }
+      },
+      { 
+        type: 'risk', 
+        agentId: 'supervisor',
+        action: 'Detected volatility spike, reduced exposure by 15%', 
+        confidence: 0.87, 
+        rationale: 'Market volatility exceeded risk tolerance thresholds',
+        impact: { treasuryChange: -5000, riskScore: -0.15, complianceScore: 0.05 }
+      },
+      { 
+        type: 'yield', 
+        agentId: 'advisor',
+        action: 'Optimized DeFi positions, +2.3% APY', 
+        confidence: 0.91, 
+        rationale: 'Found more efficient yield farming strategies',
+        impact: { treasuryChange: 23000, riskScore: 0.03, complianceScore: 0.02 }
+      },
+      { 
+        type: 'compliance', 
+        agentId: 'compliance',
+        action: 'Verified MiCA compliance for EU operations', 
+        confidence: 0.98, 
+        rationale: 'All regulatory requirements met for European markets',
+        impact: { treasuryChange: 0, riskScore: -0.05, complianceScore: 0.1 }
+      },
+      { 
+        type: 'alert', 
+        agentId: 'supervisor',
+        action: 'Unusual whale activity detected on Uniswap', 
+        confidence: 0.76, 
+        rationale: 'Large transactions detected that may impact market conditions',
+        impact: { treasuryChange: 0, riskScore: 0.08, complianceScore: 0 }
+      }
     ]
     
     return {
       ...decisions[Math.floor(Math.random() * decisions.length)],
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
       id: Math.random().toString(36).substr(2, 9)
     }
   },
 
-  getAgents() {
+  getAgents(): Agent[] {
     return [
       {
         id: 'trader',
@@ -167,10 +267,10 @@ export default function RealDataDashboard() {
   const { address, isConnected } = useAccount()
   const { disconnect } = useDisconnect()
   const router = useRouter()
-  const [treasuryData, setTreasuryData] = useState(null)
-  const [marketData, setMarketData] = useState(null)
-  const [agents, setAgents] = useState([])
-  const [decisions, setDecisions] = useState([])
+  const [treasuryData, setTreasuryData] = useState<TreasuryData | null>(null)
+  const [marketData, setMarketData] = useState<MarketData | null>(null)
+  const [agents, setAgents] = useState<Agent[]>([])
+  const [decisions, setDecisions] = useState<Decision[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState(new Date())
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -265,7 +365,7 @@ export default function RealDataDashboard() {
     )
   }
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -274,7 +374,7 @@ export default function RealDataDashboard() {
     }).format(amount)
   }
 
-  const formatLargeNumber = (num) => {
+  const formatLargeNumber = (num: number) => {
     if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B'
     if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M'
     if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K'
@@ -534,43 +634,13 @@ export default function RealDataDashboard() {
           </div>
         </motion.div>
 
-        {/* Real-time Decision Feed */}
+        {/* Enhanced Decision Feed */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="glass-card p-6 rounded-xl"
         >
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Live Decision Feed</h2>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {decisions.map((decision, index) => (
-              <motion.div
-                key={decision.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
-              >
-                <div className={`w-2 h-2 rounded-full mt-2 ${
-                  decision.impact === 'positive' ? 'bg-green-500' :
-                  decision.impact === 'warning' ? 'bg-yellow-500' :
-                  decision.impact === 'protective' ? 'bg-blue-500' : 'bg-purple-500'
-                }`} />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900 capitalize">{decision.type} Agent</span>
-                    <span className="text-xs text-gray-500">
-                      {new Date(decision.timestamp).toLocaleTimeString()}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">{decision.action}</p>
-                  <div className="flex items-center mt-2 text-xs text-gray-500">
-                    <span>Confidence: {decision.confidence}%</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <DecisionFeed decisions={decisions} />
         </motion.div>
       </main>
     </div>

@@ -187,12 +187,15 @@ export default function SettingsPage() {
             </TabsList>
 
             <TabsContent value="agents" className="space-y-6">
-              <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 p-6 rounded-xl shadow-lg">
+              <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
                 <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center">
-                    <Brain className="w-5 h-5 text-white" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center">
+                    <Brain className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-purple-800">Agent Configuration</h3>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Agent Configuration</h3>
+                    <p className="text-gray-600">Configure AI agent behavior and parameters</p>
+                  </div>
                 </div>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
@@ -249,23 +252,26 @@ export default function SettingsPage() {
                         {(settings.agentMaxPositionSize * 100).toFixed(0)}%
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-600">
                       Maximum percentage of treasury that can be allocated to a single position
                     </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="security" className="space-y-6">
-              <Card className="chart-container">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Shield className="w-5 h-5 text-primary" />
-                    <span>Security & Privacy</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Security & Privacy</h3>
+                    <p className="text-gray-600">Configure security settings and privacy controls</p>
+                  </div>
+                </div>
+                <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <Label className="text-base font-medium flex items-center space-x-2">
@@ -303,7 +309,7 @@ export default function SettingsPage() {
                         <span>Emergency Pause</span>
                         <AlertTriangle className="w-4 h-4 text-warning" />
                       </Label>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-600">
                         Enable emergency pause mechanism for crisis situations
                       </p>
                     </div>
@@ -312,19 +318,22 @@ export default function SettingsPage() {
                       onCheckedChange={(checked) => updateSetting("emergencyPauseEnabled", checked)}
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="notifications" className="space-y-6">
-              <Card className="chart-container">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Bell className="w-5 h-5 text-primary" />
-                    <span>Notification Settings</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
+                    <Bell className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Notification Settings</h3>
+                    <p className="text-gray-600">Configure alerts and notification preferences</p>
+                  </div>
+                </div>
+                <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <Label className="text-base font-medium">Email Alerts</Label>
@@ -354,26 +363,29 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <Label className="text-base font-medium">Discord Webhook</Label>
-                      <p className="text-sm text-muted-foreground">Post notifications to Discord channel</p>
+                      <p className="text-sm text-gray-600">Post notifications to Discord channel</p>
                     </div>
                     <Switch
                       checked={settings.discordWebhook}
                       onCheckedChange={(checked) => updateSetting("discordWebhook", checked)}
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="integrations" className="space-y-6">
-              <Card className="chart-container">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Globe className="w-5 h-5 text-primary" />
-                    <span>Blockchain Integrations</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center">
+                    <Globe className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Blockchain Integrations</h3>
+                    <p className="text-gray-600">Configure blockchain network connections</p>
+                  </div>
+                </div>
+                <div className="space-y-6">
                   <div className="space-y-3">
                     <Label className="text-base font-medium">Ethereum RPC URL</Label>
                     <Input
@@ -404,25 +416,28 @@ export default function SettingsPage() {
                       placeholder="https://cardano-mainnet.blockfrost.io/api/v0"
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="advanced" className="space-y-6">
-              <Card className="chart-container">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Zap className="w-5 h-5 text-primary" />
-                    <span>Advanced Configuration</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-200 shadow-xl p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center">
+                    <Zap className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Advanced Configuration</h3>
+                    <p className="text-gray-600">Advanced system settings and parameters</p>
+                  </div>
+                </div>
+                <div className="space-y-6">
                   <div className="bg-warning/10 border border-warning/20 rounded-lg p-4">
                     <div className="flex items-center space-x-2 mb-2">
                       <AlertTriangle className="w-5 h-5 text-warning" />
                       <span className="font-medium text-warning">Warning</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-600">
                       Advanced settings can significantly impact system performance and security. Only modify these if
                       you understand the implications.
                     </p>
@@ -453,8 +468,8 @@ export default function SettingsPage() {
                       <Switch />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
 
