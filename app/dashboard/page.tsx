@@ -188,10 +188,10 @@ export default function RealDataDashboard() {
   }
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'agents', label: 'AI Agents', icon: Brain },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'dashboard', label: 'Dashboard', icon: Home, href: '/dashboard' },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3, href: '/analytics' },
+    { id: 'agents', label: 'AI Agents', icon: Brain, href: '/agents' },
+    { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' }
   ]
 
   // Real-time data fetching
@@ -314,9 +314,9 @@ export default function RealDataDashboard() {
                     key={item.id}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setActiveTab(item.id)}
+                    onClick={() => router.push(item.href)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-                      activeTab === item.id
+                      item.id === 'dashboard'
                         ? 'bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg'
                         : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
                     }`}
@@ -358,11 +358,8 @@ export default function RealDataDashboard() {
       </header>
 
       <main className="container mx-auto px-6 py-8 space-y-8">
-        {/* Tab Content Rendering */}
-        {activeTab === 'dashboard' && (
-          <>
-            {/* Real Treasury Metrics */}
-            {treasuryData && (
+        {/* Real Treasury Metrics */}
+        {treasuryData && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -575,133 +572,6 @@ export default function RealDataDashboard() {
             ))}
           </div>
         </motion.div>
-          </>
-        )}
-
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 p-8 rounded-xl shadow-lg text-center">
-              <BarChart3 className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-purple-800 mb-2">Advanced Analytics</h2>
-              <p className="text-gray-600 mb-4">Deep dive into your DAO's performance metrics and trends</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                <div className="bg-white/80 p-6 rounded-lg border border-purple-200">
-                  <h3 className="font-semibold text-purple-700 mb-2">Portfolio Performance</h3>
-                  <div className="text-3xl font-bold text-green-600">+24.7%</div>
-                  <p className="text-sm text-gray-600">30-day return</p>
-                </div>
-                <div className="bg-white/80 p-6 rounded-lg border border-purple-200">
-                  <h3 className="font-semibold text-purple-700 mb-2">Risk Score</h3>
-                  <div className="text-3xl font-bold text-orange-600">6.2/10</div>
-                  <p className="text-sm text-gray-600">Moderate risk</p>
-                </div>
-                <div className="bg-white/80 p-6 rounded-lg border border-purple-200">
-                  <h3 className="font-semibold text-purple-700 mb-2">Efficiency</h3>
-                  <div className="text-3xl font-bold text-purple-600">94.3%</div>
-                  <p className="text-sm text-gray-600">AI optimization</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* AI Agents Tab */}
-        {activeTab === 'agents' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 p-8 rounded-xl shadow-lg text-center">
-              <Brain className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-purple-800 mb-2">AI Agent Management</h2>
-              <p className="text-gray-600 mb-4">Configure and monitor your autonomous AI agents</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                {agents.map((agent, index) => (
-                  <div key={agent.id} className="bg-white/80 p-6 rounded-lg border border-purple-200">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-purple-800">{agent.name}</h3>
-                      <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                        {agent.status}
-                      </div>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Performance:</span>
-                        <span className="font-medium text-purple-600">{agent.performance}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Decisions:</span>
-                        <span className="font-medium">{agent.decisions}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Uptime:</span>
-                        <span className="font-medium text-green-600">{agent.uptime}</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-3">{agent.lastAction}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Settings Tab */}
-        {activeTab === 'settings' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 p-8 rounded-xl shadow-lg text-center">
-              <Settings className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-purple-800 mb-2">System Settings</h2>
-              <p className="text-gray-600 mb-4">Configure your SentinelAI 4.0 preferences</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 text-left">
-                <div className="bg-white/80 p-6 rounded-lg border border-purple-200">
-                  <h3 className="font-semibold text-purple-800 mb-4">Risk Management</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Max Risk Exposure</span>
-                      <span className="font-medium">15%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Auto-Rebalance</span>
-                      <span className="text-green-600 font-medium">Enabled</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Emergency Stop</span>
-                      <span className="text-green-600 font-medium">Active</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white/80 p-6 rounded-lg border border-purple-200">
-                  <h3 className="font-semibold text-purple-800 mb-4">Notifications</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Email Alerts</span>
-                      <span className="text-green-600 font-medium">Enabled</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Discord Bot</span>
-                      <span className="text-green-600 font-medium">Connected</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Telegram</span>
-                      <span className="text-gray-500 font-medium">Disabled</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
       </main>
     </div>
   )

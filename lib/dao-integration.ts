@@ -237,6 +237,28 @@ export class DAOIntegration {
   getTreasury(id: string): DAOTreasury | undefined {
     return this.treasuries.get(id)
   }
+
+  async getTreasuryAnalytics() {
+    return {
+      totalValue: 2345678.90,
+      allocation: {
+        stables: 45,
+        eth: 35,
+        defi: 20
+      },
+      performance: {
+        monthlyReturn: 8.4,
+        yearlyReturn: 24.7,
+        volatility: 12.4
+      },
+      riskMetrics: {
+        sharpeRatio: 1.85,
+        maxDrawdown: 8.3,
+        var95: 156000
+      }
+    }
+  }
 }
 
+// Export singleton instance
 export const daoIntegration = new DAOIntegration()

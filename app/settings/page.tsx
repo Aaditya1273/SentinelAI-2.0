@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import { useAccount, useDisconnect } from "wagmi"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,10 +12,14 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { MainNav } from "@/components/navigation/main-nav"
-import { Settings, Shield, Zap, Bell, Globe, Brain, AlertTriangle, CheckCircle, Save } from "lucide-react"
+import { Settings, Shield, Zap, Bell, Globe, Brain, AlertTriangle, CheckCircle, Save, Home, BarChart3, RefreshCw, LogOut } from "lucide-react"
 
 export default function SettingsPage() {
+  const { isConnected, address } = useAccount()
+  const { disconnect } = useDisconnect()
+  const router = useRouter()
+  const [lastUpdate, setLastUpdate] = useState(new Date())
+  
   const [settings, setSettings] = useState({
     // Agent Configuration
     agentAutoRebalance: true,
@@ -38,6 +44,25 @@ export default function SettingsPage() {
 
   const [isSaving, setIsSaving] = useState(false)
 
+  // Redirect if not connected
+  useEffect(() => {
+    if (!isConnected) {
+      router.push('/landing')
+    }
+  }, [isConnected, router])
+
+  const handleDisconnect = () => {
+    disconnect()
+    router.push('/landing')
+  }
+
+  const navigationItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home, href: '/dashboard' },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3, href: '/analytics' },
+    { id: 'agents', label: 'AI Agents', icon: Brain, href: '/agents' },
+    { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' }
+  ]
+
   const handleSave = async () => {
     setIsSaving(true)
     // Simulate API call
@@ -50,21 +75,91 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+      {/* Enhanced Header with Navigation */}
+      <header className="bg-white/95 backdrop-blur-xl border-b border-purple-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6 py-4">
-          <MainNav />
+          <div className="flex items-center justify-between">
+            {/* Logo and Brand */}
+            <div className="flex items-center space-x-4">
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                className="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-600 rounded-xl shadow-lg flex items-center justify-center"
+              >
+                <Shield className="w-6 h-6 text-white" />
+              </motion.div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                  SentinelAI 4.0
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Last updated: {lastUpdate.toLocaleTimeString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Navigation Menu */}
+            <nav className="hidden md:flex items-center space-x-1">
+              {navigationItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <motion.button
+                    key={item.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => router.push(item.href)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                      item.id === 'settings'
+                        ? 'bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg'
+                        : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {item.label}
+                  </motion.button>
+                )
+              })}
+            </nav>
+
+            {/* User Actions */}
+            <div className="flex items-center space-x-3">
+              <div className="text-sm text-green-600 bg-green-50 px-3 py-2 rounded-xl border border-green-200 font-medium">
+                All Systems Operational
+              </div>
+              <div className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200">
+                {address?.slice(0, 6)}...{address?.slice(-4)}
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.reload()}
+                className="p-2 text-gray-600 hover:text-purple-600 transition-colors rounded-xl hover:bg-purple-50"
+              >
+                <RefreshCw className="w-5 h-5" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleDisconnect}
+                className="p-2 text-red-600 hover:text-red-700 transition-colors rounded-xl hover:bg-red-50"
+              >
+                <LogOut className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </div>
         </div>
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          <div className="flex items-center space-x-3">
-            <Settings className="w-8 h-8 text-primary" />
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">System Settings</h1>
-              <p className="text-muted-foreground">Configure SentinelAI 4.0 parameters and integrations</p>
-            </div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+              System Settings
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Configure SentinelAI 4.0 parameters and integrations
+            </p>
           </div>
 
           <Tabs defaultValue="agents" className="space-y-6">
@@ -92,18 +187,18 @@ export default function SettingsPage() {
             </TabsList>
 
             <TabsContent value="agents" className="space-y-6">
-              <Card className="chart-container">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Brain className="w-5 h-5 text-primary" />
-                    <span>Agent Configuration</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+              <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 p-6 rounded-xl shadow-lg">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center">
+                    <Brain className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-purple-800">Agent Configuration</h3>
+                </div>
+                <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label className="text-base font-medium">Auto-Rebalancing</Label>
-                      <p className="text-sm text-muted-foreground">
+                      <Label className="text-base font-medium text-gray-900">Auto-Rebalancing</Label>
+                      <p className="text-sm text-gray-600">
                         Allow agents to automatically rebalance portfolio positions
                       </p>
                     </div>
@@ -380,6 +475,7 @@ export default function SettingsPage() {
           </div>
         </motion.div>
       </main>
-    </div>
+      </div>
+    </>
   )
 }
