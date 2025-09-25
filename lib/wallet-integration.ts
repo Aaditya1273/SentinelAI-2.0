@@ -1,11 +1,20 @@
-// RainbowKit Wallet Integration for SentinelAI 4.0
-import { getDefaultWallets, connectorsForWallets } from '@rainbow-me/rainbowkit'
-import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { mainnet, polygon, arbitrum, optimism, base, sepolia } from 'wagmi/chains'
-import { publicProvider } from 'wagmi/providers/public'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { infuraProvider } from 'wagmi/providers/infura'
+// Enhanced RainbowKit Wallet Integration for SentinelAI 4.0
+import { getDefaultConfig, getDefaultWallets, connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { createConfig, http, type Config } from 'wagmi'
+import { mainnet, polygon, arbitrum, optimism, base, sepolia, type Chain } from 'wagmi/chains'
 import { EventEmitter } from 'events'
+
+// Import additional wallet connectors
+import {
+  phantomWallet,
+  braveWallet,
+  okxWallet,
+  trustWallet,
+  ledgerWallet,
+  imTokenWallet,
+  oneInchWallet,
+  safeWallet,
+} from '@rainbow-me/rainbowkit/wallets'
 
 // Custom Cardano chain configuration
 const cardano = {
@@ -27,9 +36,8 @@ const cardano = {
 } as const
 
 export class WalletIntegration extends EventEmitter {
-  private wagmiConfig: any
-  private chains: any[]
-  private connectors: any[]
+  private wagmiConfig: Config
+  private chains: readonly [Chain, ...Chain[]]
   private currentAccount: string | null = null
   private supportedTokens: Map<string, TokenInfo> = new Map()
 
@@ -39,74 +47,103 @@ export class WalletIntegration extends EventEmitter {
   }
 
   private async initializeWalletIntegration() {
-    console.log('[Wallet] Initializing RainbowKit wallet integration...')
+    console.log('[Wallet] Initializing enhanced wallet integration...')
     
-    // Configure supported chains
-    this.setupChains()
-    
-    // Initialize wallet connectors
-    this.setupWalletConnectors()
+    // Configure supported chains and wagmi config
+    this.setupWagmiConfig()
     
     // Configure supported tokens
     this.setupSupportedTokens()
     
-    console.log('[Wallet] RainbowKit integration ready')
+    console.log('[Wallet] Enhanced wallet integration ready')
   }
 
-  private setupChains() {
-    const { chains, publicClient, webSocketPublicClient } = configureChains(
-      [
-        mainnet,
-        polygon,
-        arbitrum,
-        optimism,
-        base,
-        sepolia, // For testing
-        cardano as any // Custom Cardano support
-      ],
-      [
-        alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo' }),
-        infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID || 'demo' }),
-        publicProvider(),
-      ]
-    )
+  private setupWagmiConfig() {
+    // Define supported chains
+    this.chains = [
+      mainnet,
+      polygon,
+      arbitrum,
+      optimism,
+      base,
+      sepolia, // For testing
+    ] as const
 
-    this.chains = chains
-    
-    // Create wagmi config
-    this.wagmiConfig = createConfig({
-      autoConnect: true,
-      connectors: this.connectors,
-      publicClient,
-      webSocketPublicClient,
-    })
-  }
-
-  private setupWalletConnectors() {
-    const { wallets } = getDefaultWallets({
+    // Create wagmi config using getDefaultConfig which includes RainbowKit integration
+    this.wagmiConfig = getDefaultConfig({
       appName: 'SentinelAI 4.0',
       projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'demo',
       chains: this.chains,
+      transports: {
+        [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo'}`),
+        [polygon.id]: http(`https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo'}`),
+        [arbitrum.id]: http(`https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo'}`),
+        [optimism.id]: http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo'}`),
+        [base.id]: http(`https://base-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo'}`),
+        [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID || 'demo'}`),
+      },
+      ssr: true, // Enable server-side rendering support
+    })
+  }
+
+  // Get enhanced wallet configuration for RainbowKit
+  static getEnhancedWalletConfig() {
+    const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'demo'
+    
+    // Get default wallets (MetaMask, WalletConnect, Coinbase, Rainbow)
+    const { wallets } = getDefaultWallets({
+      appName: 'SentinelAI 4.0',
+      projectId,
     })
 
-    // Add custom connectors for specialized wallets
-    const customConnectors = connectorsForWallets([
+    // Configure enhanced wallet connectors with additional wallets
+    const enhancedConnectors = connectorsForWallets([
+      // Popular wallets group (includes defaults)
       ...wallets,
+      
+      // Browser & Extension Wallets
+      {
+        groupName: 'Browser Wallets',
+        wallets: [
+          braveWallet({}),
+          okxWallet({}),
+          oneInchWallet({}),
+        ],
+      },
+
+      // Mobile & Multi-Chain Wallets
+      {
+        groupName: 'Mobile Wallets',
+        wallets: [
+          phantomWallet({}),
+          trustWallet({}),
+          imTokenWallet({}),
+        ],
+      },
+
+      // Hardware Wallets
+      {
+        groupName: 'Hardware Wallets',
+        wallets: [
+          ledgerWallet({}),
+          // Note: trezorWallet was removed from RainbowKit v2
+        ],
+      },
+
+      // DeFi & Institutional Wallets
       {
         groupName: 'DeFi Wallets',
         wallets: [
-          // Add DeFi-specific wallet connectors here
+          safeWallet({}),
+          // Add more DeFi wallets here as needed
         ],
       },
-      {
-        groupName: 'Cardano Wallets',
-        wallets: [
-          // Add Cardano wallet connectors here
-        ],
-      },
-    ])
+    ], {
+      appName: 'SentinelAI 4.0',
+      projectId,
+    })
 
-    this.connectors = customConnectors
+    return enhancedConnectors
   }
 
   private setupSupportedTokens() {
@@ -139,6 +176,15 @@ export class WalletIntegration extends EventEmitter {
         logo: '/tokens/usdc.png'
       },
       {
+        symbol: 'USDT',
+        name: 'Tether USD',
+        address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+        decimals: 6,
+        chainId: 1,
+        isNative: false,
+        logo: '/tokens/usdt.png'
+      },
+      {
         symbol: 'AAVE',
         name: 'Aave',
         address: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
@@ -148,6 +194,15 @@ export class WalletIntegration extends EventEmitter {
         logo: '/tokens/aave.png'
       },
       {
+        symbol: 'UNI',
+        name: 'Uniswap',
+        address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+        decimals: 18,
+        chainId: 1,
+        isNative: false,
+        logo: '/tokens/uni.png'
+      },
+      {
         symbol: 'ADA',
         name: 'Cardano',
         address: '0x0000000000000000000000000000000000000000',
@@ -155,7 +210,37 @@ export class WalletIntegration extends EventEmitter {
         chainId: 1815,
         isNative: true,
         logo: '/tokens/ada.png'
-      }
+      },
+      // Polygon tokens
+      {
+        symbol: 'MATIC',
+        name: 'Polygon',
+        address: '0x0000000000000000000000000000000000000000',
+        decimals: 18,
+        chainId: 137,
+        isNative: true,
+        logo: '/tokens/matic.png'
+      },
+      // Arbitrum tokens
+      {
+        symbol: 'ARB',
+        name: 'Arbitrum',
+        address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+        decimals: 18,
+        chainId: 42161,
+        isNative: false,
+        logo: '/tokens/arb.png'
+      },
+      // Optimism tokens
+      {
+        symbol: 'OP',
+        name: 'Optimism',
+        address: '0x4200000000000000000000000000000000000042',
+        decimals: 18,
+        chainId: 10,
+        isNative: false,
+        logo: '/tokens/op.png'
+      },
     ]
 
     tokens.forEach(token => {
@@ -163,32 +248,106 @@ export class WalletIntegration extends EventEmitter {
     })
   }
 
-  async connectWallet(): Promise<{ address: string; chainId: number }> {
+  // Get available wallet options for UI display
+  getAvailableWallets() {
+    return {
+      popular: [
+        { id: 'metamask', name: 'MetaMask', icon: '/wallets/metamask.png' },
+        { id: 'walletconnect', name: 'WalletConnect', icon: '/wallets/walletconnect.png' },
+        { id: 'coinbase', name: 'Coinbase Wallet', icon: '/wallets/coinbase.png' },
+        { id: 'rainbow', name: 'Rainbow', icon: '/wallets/rainbow.png' },
+      ],
+      browser: [
+        { id: 'brave', name: 'Brave Wallet', icon: '/wallets/brave.png' },
+        { id: 'okx', name: 'OKX Wallet', icon: '/wallets/okx.png' },
+        { id: 'oneinch', name: '1inch Wallet', icon: '/wallets/1inch.png' },
+      ],
+      mobile: [
+        { id: 'phantom', name: 'Phantom', icon: '/wallets/phantom.png' },
+        { id: 'trust', name: 'Trust Wallet', icon: '/wallets/trust.png' },
+        { id: 'imtoken', name: 'imToken', icon: '/wallets/imtoken.png' },
+      ],
+      hardware: [
+        { id: 'ledger', name: 'Ledger', icon: '/wallets/ledger.png' },
+        { id: 'trezor', name: 'Trezor', icon: '/wallets/trezor.png' },
+      ],
+      defi: [
+        { id: 'safe', name: 'Safe', icon: '/wallets/safe.png' },
+      ],
+      cardano: [
+        { id: 'yoroi', name: 'Yoroi', icon: '/wallets/yoroi.png' },
+        { id: 'nami', name: 'Nami', icon: '/wallets/nami.png' },
+        { id: 'eternl', name: 'Eternl', icon: '/wallets/eternl.png' },
+      ]
+    }
+  }
+
+  async connectWallet(walletId?: string): Promise<{ address: string; chainId: number; walletType: string }> {
     try {
-      console.log('[Wallet] Initiating wallet connection...')
+      console.log(`[Wallet] Initiating wallet connection${walletId ? ` with ${walletId}` : ''}...`)
       
       // In production, this would trigger the actual wallet connection
-      // For demo, we'll simulate the connection
+      // The walletId would be used to connect to a specific wallet
       const mockAddress = '0x' + Math.random().toString(16).substr(2, 40)
       const mockChainId = 1
+      const walletType = walletId || 'metamask'
       
       this.currentAccount = mockAddress
       
       this.emit('walletConnected', {
         address: mockAddress,
-        chainId: mockChainId
+        chainId: mockChainId,
+        walletType
       })
       
-      console.log(`[Wallet] Connected to ${mockAddress} on chain ${mockChainId}`)
+      console.log(`[Wallet] Connected to ${mockAddress} via ${walletType} on chain ${mockChainId}`)
       
       return {
         address: mockAddress,
-        chainId: mockChainId
+        chainId: mockChainId,
+        walletType
       }
       
     } catch (error) {
       console.error('[Wallet] Connection failed:', error)
       throw error
+    }
+  }
+
+  // Check if a specific wallet is available
+  async isWalletAvailable(walletId: string): Promise<boolean> {
+    const availability = {
+      metamask: typeof window !== 'undefined' && !!window.ethereum?.isMetaMask,
+      phantom: typeof window !== 'undefined' && !!window.solana?.isPhantom,
+      brave: typeof window !== 'undefined' && !!window.ethereum?.isBraveWallet,
+      okx: typeof window !== 'undefined' && !!window.okexchain,
+      trust: typeof window !== 'undefined' && !!window.ethereum?.isTrust,
+      coinbase: typeof window !== 'undefined' && !!window.ethereum?.isCoinbaseWallet,
+      // Add more wallet detection logic
+    }
+    
+    return availability[walletId as keyof typeof availability] || false
+  }
+
+  // Get wallet-specific features
+  getWalletFeatures(walletId: string) {
+    const features = {
+      metamask: ['ethereum', 'bsc', 'polygon', 'arbitrum', 'optimism'],
+      phantom: ['solana', 'ethereum'],
+      brave: ['ethereum', 'bsc', 'polygon'],
+      okx: ['ethereum', 'bsc', 'polygon', 'arbitrum', 'okex'],
+      trust: ['ethereum', 'bsc', 'polygon', 'arbitrum'],
+      ledger: ['ethereum', 'bitcoin', 'cardano', 'polkadot'],
+      trezor: ['ethereum', 'bitcoin', 'cardano'],
+      yoroi: ['cardano'],
+      nami: ['cardano'],
+    }
+    
+    return {
+      supportedChains: features[walletId as keyof typeof features] || [],
+      isHardware: ['ledger', 'trezor'].includes(walletId),
+      isMobile: ['phantom', 'trust', 'imtoken'].includes(walletId),
+      supportsDApps: !['ledger', 'trezor'].includes(walletId)
     }
   }
 
@@ -417,7 +576,7 @@ export class WalletIntegration extends EventEmitter {
   }
 
   getSupportedChains() {
-    return this.chains.map((chain: any) => ({
+    return this.chains.map((chain) => ({
       id: chain.id,
       name: chain.name,
       nativeCurrency: chain.nativeCurrency,

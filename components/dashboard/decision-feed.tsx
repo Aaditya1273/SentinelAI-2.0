@@ -22,9 +22,10 @@ interface Decision {
 
 interface DecisionFeedProps {
   decisions: Decision[]
+  onViewAnalytics?: () => void
 }
 
-export function DecisionFeed({ decisions }: DecisionFeedProps) {
+export function DecisionFeed({ decisions, onViewAnalytics }: DecisionFeedProps) {
   const getAgentConfig = (agentId: string | undefined, type?: string) => {
     if (!agentId && !type) return { icon: Bot, color: "purple", name: "AI Agent" }
     
@@ -250,6 +251,7 @@ export function DecisionFeed({ decisions }: DecisionFeedProps) {
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={onViewAnalytics}
             className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
           >
             <Zap className="w-5 h-5" />

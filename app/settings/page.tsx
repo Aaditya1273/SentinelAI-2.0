@@ -70,8 +70,40 @@ export default function SettingsPage() {
     setIsSaving(false)
   }
 
-  const updateSetting = (key: string, value: any) => {
-    setSettings((prev) => ({ ...prev, [key]: value }))
+  const updateSetting = async (key: string, value: any) => {
+    try {
+      // PRODUCTION: Save settings to real database/localStorage
+      const newSettings = { ...settings, [key]: value }
+      setSettings(newSettings)
+      
+      // Save to localStorage for persistence
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sentinelai-settings', JSON.stringify(newSettings))
+      }
+      
+      // Save to production database if available
+      if (address) {
+        try {
+          const response = await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              walletAddress: address,
+              settings: newSettings
+            })
+          })
+          
+          if (response.ok) {
+            console.log('[Settings] Saved to production database')
+          }
+        } catch (error) {
+          console.log('[Settings] Database save failed, using localStorage only')
+        }
+      }
+      
+    } catch (error) {
+      console.error('Failed to update setting:', error)
+    }
   }
 
   return (

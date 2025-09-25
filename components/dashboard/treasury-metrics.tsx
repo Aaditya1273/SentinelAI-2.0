@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -39,12 +40,36 @@ interface TreasuryMetricsProps {
 }
 
 export function TreasuryMetrics({ treasuries }: TreasuryMetricsProps) {
-  // Mock historical data for charts
-  const performanceData = Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    value: 2500000 + Math.sin(i * 0.2) * 200000 + Math.random() * 100000,
-    yield: 4.5 + Math.sin(i * 0.3) * 1.5 + Math.random() * 0.5,
-  }))
+  // PRODUCTION: Real treasury data from blockchain
+  const [realData, setRealData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadRealData = async () => {
+      try {
+        const { productionDataService } = await import('@/lib/production-data-service')
+        const treasuryData = await productionDataService.getRealTreasuryData()
+        const marketData = await productionDataService.getRealMarketData()
+        
+        setRealData({
+          treasury: treasuryData,
+          market: marketData
+        })
+      } catch (error) {
+        console.error('Failed to load real data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    loadRealData()
+    
+    // Update every 30 seconds
+    const interval = setInterval(loadRealData, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const performanceData = realData?.treasury?.performance || []
 
   const totalValue = treasuries.reduce((sum, treasury) => sum + treasury.totalValue, 0)
   const totalAssets = treasuries.reduce((sum, treasury) => sum + treasury.assets.length, 0)

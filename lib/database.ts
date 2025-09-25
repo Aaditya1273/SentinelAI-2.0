@@ -1,15 +1,20 @@
+// PRODUCTION DATABASE - Real Data Storage for SentinelAI 4.0
 import Database from 'better-sqlite3';
 import { randomBytes } from 'crypto';
 import path from 'path';
 
-// Database interface definitions
+// Production database interfaces
 export interface User {
   id: string;
-  address: string;
+  wallet_address: string;
+  email?: string;
   session_id: string;
   created_at: string;
   last_active: string;
   is_connected: boolean;
+  subscription_tier: 'free' | 'pro' | 'enterprise';
+  api_calls_used: number;
+  api_calls_limit: number;
 }
 
 export interface TreasuryData {
