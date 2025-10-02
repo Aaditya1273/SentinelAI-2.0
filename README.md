@@ -1,4 +1,4 @@
-# 🛡️ SentinelAI 4.0 - Privacy-First Autonomous Multi-Agent DAO Treasury Guardian
+<img width="1919" height="599" alt="Screenshot 2025-10-02 142726" src="https://github.com/user-attachments/assets/e31b3cc9-89be-4f6e-b473-4e05e7f2fb4e" /># 🛡️ SentinelAI 4.0 - Privacy-First Autonomous Multi-Agent DAO Treasury Guardian
 
 [![CI/CD Pipeline](https://github.com/user/sentinelai-4.0/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/user/sentinelai-4.0/actions)
 [![Test Coverage](https://codecov.io/gh/user/sentinelai-4.0/branch/main/graph/badge.svg)](https://codecov.io/gh/user/sentinelai-4.0)
@@ -10,6 +10,17 @@
 ## 🎯 Vision
 
 SentinelAI 4.0 revolutionizes DAO treasury management through cutting-edge AI agents, quantum-resistant privacy, and tokenized governance. It's not just a hackathon demo—it's a production-ready system that DAOs can deploy today to optimize their treasuries, ensure compliance, and maintain complete privacy.
+## GALLARY
+<img width="1915" height="880" alt="Screenshot 2025-10-02 142132" src="https://github.com/user-attachments/assets/cd7b3b5a-f8f8-4a7d-ad5b-2f90bf43795a" />
+<img width="1918" height="878" alt="Screenshot 2025-10-02 142335" src="https://github.com/user-attachments/assets/49eeda71-df4e-4e62-a8f2-09e9bfd24bdd" />
+<img width="1915" height="875" alt="Screenshot 2025-10-02 142349" src="https://github.com/user-attachments/assets/026b2c55-acb0-4c0b-8bd7-ce01904fedfa" />
+<img width="1119" height="763" alt="Screenshot 2025-10-02 142404" src="https://github.com/user-attachments/assets/b728b61a-da98-4f9a-a39c-08af2619a30c" />
+<img width="1919" height="876" alt="Screenshot 2025-10-02 142444" src="https://github.com/user-attachments/assets/970df3aa-d7bf-4491-a4d3-cc0214495584" />
+<img width="1918" height="801" alt="Screenshot 2025-10-02 142626" src="https://github.com/user-attachments/assets/ee17aa69-d67e-4e97-9600-bb11a96373f0" />
+<img width="1915" height="867" alt="Screenshot 2025-10-02 142643" src="https://github.com/user-attachments/assets/019fcbac-78ee-4c51-b728-19f45058e291" />
+<img width="1919" height="870" alt="Screenshot 2025-10-02 142704" src="https://github.com/user-attachments/assets/7ce5e362-1f98-4d48-9659-2305e0044f99" />
+<img width="1919" height="599" alt="Screenshot 2025-10-02 142726" src="https://github.com/user-attachments/assets/e3ac211f-2984-430b-8769-8b9455791410" />
+
 
 ## ✨ Key Features
 
