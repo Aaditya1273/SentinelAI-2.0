@@ -90,55 +90,6 @@ docker-compose ps
 docker-compose logs -f sentinelai
 ```
 
-## 🏗️ Architecture
-
-```mermaid
-graph TB
-    subgraph "Frontend Layer"
-        UI[React Dashboard]
-        Voice[Voice Interface]
-        Wallet[RainbowKit Wallet]
-    end
-    
-    subgraph "Agent Layer"
-        Trader[Trader Agent]
-        Compliance[Compliance Agent]
-        Supervisor[Supervisor Agent]
-        Advisor[Advisor Agent]
-    end
-    
-    subgraph "AI/ML Layer"
-        PyTorch[PyTorch Models]
-        ONNX[ONNX Runtime]
-        SHAP[SHAP Explainer]
-        FL[Federated Learning]
-    end
-    
-    subgraph "Privacy Layer"
-        ZK[ZK Circuits]
-        Midnight[Midnight.js]
-        Snarkjs[snarkjs]
-    end
-    
-    subgraph "Blockchain Layer"
-        USDM[USDM Token]
-        SentinelAI[SentinelAI Contract]
-        ZKVerifier[ZK Verifier]
-    end
-    
-    subgraph "External APIs"
-        Snapshot[Snapshot API]
-        Uniswap[Uniswap/TheGraph]
-        Aave[Aave Protocol]
-        Chainlink[Chainlink Oracles]
-    end
-    
-    UI --> Agent Layer
-    Agent Layer --> AI/ML Layer
-    Agent Layer --> Privacy Layer
-    Privacy Layer --> Blockchain Layer
-    Agent Layer --> External APIs
-```
 
 ## 🧪 Testing
 
