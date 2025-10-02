@@ -329,49 +329,7 @@ npm run type-check
 - [x] AI Model Security Review (Anthropic)
 - [x] Infrastructure Security Assessment (CertiK)
 
-### Bug Bounty
-We offer rewards for security vulnerabilities:
-- Critical: $10,000
-- High: $5,000
-- Medium: $1,000
-- Low: $500
 
-Report to: security@sentinelai.io
-
-## 📚 Documentation
-
-- [📖 Full Documentation](https://docs.sentinelai.io)
-- [🎓 Tutorials](https://docs.sentinelai.io/tutorials)
-- [📋 API Reference](https://docs.sentinelai.io/api)
-- [🔧 Developer Guide](https://docs.sentinelai.io/developers)
-- [🎯 Use Cases](https://docs.sentinelai.io/use-cases)
-
-## 🌟 Roadmap
-
-### Q1 2024
-- [x] Multi-agent architecture
-- [x] ZK privacy implementation
-- [x] USDM tokenomics
-- [x] Production deployment
-
-### Q2 2024
-- [ ] Advanced federated learning
-- [ ] Cross-chain bridge expansion
-- [ ] Mobile app release
-- [ ] Enterprise partnerships
-
-### Q3 2024
-- [ ] Quantum-resistant upgrades
-- [ ] AI agent marketplace v2
-- [ ] Regulatory compliance expansion
-- [ ] Performance optimizations
-
-## 🏆 Awards & Recognition
-
-- 🥇 **Best DeFi Innovation** - ETHGlobal 2024
-- 🏆 **Privacy Tech Award** - ZK Summit 2024
-- 🌟 **Top AI Project** - AI/Web3 Hackathon 2024
-- 💎 **Community Choice** - DAO Governance Awards 2024
 
 ## 🤝 Partners & Integrations
 
@@ -381,14 +339,6 @@ Report to: security@sentinelai.io
 - **Uniswap** - DEX integration
 - **Snapshot** - Governance tools
 
-## 📞 Support
-
-- **Discord**: [Join our community](https://discord.gg/sentinelai)
-- **Telegram**: [@SentinelAI_Official](https://t.me/SentinelAI_Official)
-- **Twitter**: [@SentinelAI_4](https://twitter.com/SentinelAI_4)
-- **Email**: support@sentinelai.io
-
-## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
