@@ -1,4 +1,4 @@
-<img width="1919" height="599" alt="Screenshot 2025-10-02 142726" src="https://github.com/user-attachments/assets/e31b3cc9-89be-4f6e-b473-4e05e7f2fb4e" /># 🛡️ SentinelAI 4.0 - Privacy-First Autonomous Multi-Agent DAO Treasury Guardian
+# 🛡️ SentinelAI 4.0 - Privacy-First Autonomous Multi-Agent DAO Treasury Guardian
 
 [![CI/CD Pipeline](https://github.com/user/sentinelai-4.0/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/user/sentinelai-4.0/actions)
 [![Test Coverage](https://codecov.io/gh/user/sentinelai-4.0/branch/main/graph/badge.svg)](https://codecov.io/gh/user/sentinelai-4.0)
@@ -20,7 +20,7 @@ SentinelAI 4.0 revolutionizes DAO treasury management through cutting-edge AI ag
 <img width="1915" height="867" alt="Screenshot 2025-10-02 142643" src="https://github.com/user-attachments/assets/019fcbac-78ee-4c51-b728-19f45058e291" />
 <img width="1919" height="870" alt="Screenshot 2025-10-02 142704" src="https://github.com/user-attachments/assets/7ce5e362-1f98-4d48-9659-2305e0044f99" />
 <img width="1919" height="599" alt="Screenshot 2025-10-02 142726" src="https://github.com/user-attachments/assets/e3ac211f-2984-430b-8769-8b9455791410" />
-
+<img width="1919" height="599" alt="Screenshot 2025-10-02 142726" src="https://github.com/user-attachments/assets/e31b3cc9-89be-4f6e-b473-4e05e7f2fb4e" />
 
 ## ✨ Key Features
 
